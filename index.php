@@ -15,6 +15,7 @@ $router->get('/', function() {
 
 $router->post('upload', function() {
     header("content-type:application/json; charset:utf-8");
+    header("Cache-control: no-cache");
     $curlObj = Client::init('https://telegra.ph/upload', 'post')
         ->set('postFields', ['file' => new CURLFile($_FILES["file"]["tmp_name"])])
         ->set('postFieldsBuildQuery', false)
@@ -41,10 +42,12 @@ $router->get('/file/(.*)', function($name) {
     $start = strpos($header, "content-type");
     $end = strpos($header, "content-length");
     if($curlObj->getInfo()['http_code'] === 200) {
+        header('Cache-Control: public,s-maxage=360000,max-age=360000');
         header("content-type: ".substr($header, $start+14, $end-$start-16));
         echo $curlObj->getBody();
     }else{
         header("content-type: image/jpeg");
+        header('Cache-Control: public,s-maxage=36000,max-age=3600');
         echo file_get_contents(__DIR__ . "/assets/img/akkarin.jpg");
     }
 });
