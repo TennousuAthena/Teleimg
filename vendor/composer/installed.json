@@ -1,0 +1,130 @@
+{
+    "packages": [
+        {
+            "name": "bramus/router",
+            "version": "1.5",
+            "version_normalized": "1.5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bramus/router.git",
+                "reference": "6adc0182dc6b0ebc22fd10543f65a36de10d8c05"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bramus/router/zipball/6adc0182dc6b0ebc22fd10543f65a36de10d8c05",
+                "reference": "6adc0182dc6b0ebc22fd10543f65a36de10d8c05",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "~2.14",
+                "phpunit/php-code-coverage": "~2.0",
+                "phpunit/phpunit": "~4.0"
+            },
+            "time": "2020-10-26T09:50:48+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Bramus": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bram(us) Van Damme",
+                    "email": "bramus@bram.us",
+                    "homepage": "http://www.bram.us"
+                }
+            ],
+            "description": "A lightweight and simple object oriented PHP Router",
+            "homepage": "https://github.com/bramus/router",
+            "keywords": [
+                "router",
+                "routing"
+            ],
+            "support": {
+                "issues": "https://github.com/bramus/router/issues",
+                "source": "https://github.com/bramus/router/tree/1.5"
+            },
+            "install-path": "../bramus/router"
+        },
+        {
+            "name": "jshensh/php-curl-class",
+            "version": "0.0.18",
+            "version_normalized": "0.0.18.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jshensh/php-curl-class.git",
+                "reference": "6a13fc21284ec43196f16afce0e600ba28345aa7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jshensh/php-curl-class/zipball/6a13fc21284ec43196f16afce0e600ba28345aa7",
+                "reference": "6a13fc21284ec43196f16afce0e600ba28345aa7",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "php": "^5.6 || ^7.1"
+            },
+            "time": "2021-06-22T08:43:31+00:00",
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CustomCurl\\FrameworkSupport\\Laravel\\Providers\\LoadViewsProvider"
+                    ]
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "CustomCurl\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "jshensh",
+                    "email": "admin@imjs.work",
+                    "homepage": "https://233.imjs.work"
+                }
+            ],
+            "description": "PHP HTTP client, based on cURL",
+            "keywords": [
+                "client",
+                "curl",
+                "http",
+                "http client",
+                "web service"
+            ],
+            "support": {
+                "issues": "https://github.com/jshensh/php-curl-class/issues",
+                "source": "https://github.com/jshensh/php-curl-class/tree/0.0.18"
+            },
+            "install-path": "../jshensh/php-curl-class"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

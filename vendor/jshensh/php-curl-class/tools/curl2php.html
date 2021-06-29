@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>Curl 转 PHP</title>
+        <link href="https://cdn.bootcss.com/codemirror/5.28.0/codemirror.min.css" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/codemirror/5.28.0/codemirror.min.js"></script>
+        <script src="https://cdn.bootcss.com/codemirror/5.28.0/mode/shell/shell.min.js"></script>
+        <script src="https://cdn.bootcss.com/codemirror/5.28.0/mode/htmlmixed/htmlmixed.min.js"></script>
+        <script src="https://cdn.bootcss.com/codemirror/5.28.0/mode/xml/xml.min.js"></script>
+        <script src="https://cdn.bootcss.com/codemirror/5.28.0/mode/javascript/javascript.min.js"></script>
+        <script src="https://cdn.bootcss.com/codemirror/5.28.0/mode/css/css.min.js"></script>
+        <script src="https://cdn.bootcss.com/codemirror/5.28.0/mode/clike/clike.min.js"></script>
+        <script src="https://cdn.bootcss.com/codemirror/5.28.0/mode/php/php.min.js"></script>
+        <link href="https://cdn.bootcss.com/codemirror/5.28.0/addon/scroll/simplescrollbars.min.css" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/codemirror/5.28.0/addon/scroll/simplescrollbars.min.js"></script>
+        <style>
+            pre {
+              font: normal 10pt Consolas, Monaco, monospace;
+            }
+
+            .CodeMirror {
+                height: 150px;
+            }
+
+            /*!
+             * GitHub Light v0.4.2
+             * Copyright (c) 2012 - 2017 GitHub, Inc.
+             * Licensed under MIT (https://github.com/primer/github-syntax-theme-generator/blob/master/LICENSE)
+             */
+            .cm-s-github-light.CodeMirror {
+                background: #fff;
+                color: #24292e
+            }
+
+            .cm-s-github-light .CodeMirror-gutters {
+                background: #fff;
+                border-right-width: 0
+            }
+
+            .cm-s-github-light .CodeMirror-guttermarker {
+                color: white
+            }
+
+            .cm-s-github-light .CodeMirror-guttermarker-subtle {
+                color: #d0d0d0
+            }
+
+            .cm-s-github-light .CodeMirror-linenumber {
+                color: #959da5;
+                padding: 0 16px 0 16px
+            }
+
+            .cm-s-github-light .CodeMirror-cursor {
+                border-left: 1px solid #24292e
+            }
+
+            .cm-s-github-light div.CodeMirror-selected,.cm-s-github-light .CodeMirror-line::-moz-selection,.cm-s-github-light .CodeMirror-line>span::-moz-selection,.cm-s-github-light .CodeMirror-line>span>span::-moz-selection,.cm-s-github-light .CodeMirror-line::-moz-selection,.cm-s-github-light .CodeMirror-line>span::-moz-selection,.cm-s-github-light .CodeMirror-line>span>span::-moz-selection {
+                background: #c8c8fa
+            }
+
+            .cm-s-github-light div.CodeMirror-selected,.cm-s-github-light .CodeMirror-line::selection,.cm-s-github-light .CodeMirror-line>span::selection,.cm-s-github-light .CodeMirror-line>span>span::selection,.cm-s-github-light .CodeMirror-line::-moz-selection,.cm-s-github-light .CodeMirror-line>span::-moz-selection,.cm-s-github-light .CodeMirror-line>span>span::-moz-selection {
+                background: #c8c8fa
+            }
+
+            .cm-s-github-light .CodeMirror-activeline-background {
+                background: #fafbfc
+            }
+
+            .cm-s-github-light .CodeMirror-matchingbracket {
+                text-decoration: underline;
+                color: #24292e !important
+            }
+
+            .cm-s-github-light .CodeMirror-lines {
+                font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+                font-size: 12px;
+                background: #fff;
+                line-height: 1.5
+            }
+
+            .cm-s-github-light .cm-comment {
+                color: #6a737d
+            }
+
+            .cm-s-github-light .cm-constant {
+                color: #005cc5
+            }
+
+            .cm-s-github-light .cm-entity {
+                font-weight: normal;
+                font-style: normal;
+                text-decoration: none;
+                color: #6f42c1
+            }
+
+            .cm-s-github-light .cm-keyword {
+                font-weight: normal;
+                font-style: normal;
+                text-decoration: none;
+                color: #d73a49
+            }
+
+            .cm-s-github-light .cm-storage {
+                color: #d73a49
+            }
+
+            .cm-s-github-light .cm-string {
+                font-weight: normal;
+                font-style: normal;
+                text-decoration: none;
+                color: #032f62
+            }
+
+            .cm-s-github-light .cm-support {
+                font-weight: normal;
+                font-style: normal;
+                text-decoration: none;
+                color: #005cc5
+            }
+
+            .cm-s-github-light .cm-variable {
+                font-weight: normal;
+                font-style: normal;
+                text-decoration: none;
+                color: #e36209
+            }
+
+            .file-editor-textarea {
+                width: 100%;
+                padding: 5px 4px;
+                font: 12px "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+                resize: vertical;
+                border: 0;
+                border-radius: 0;
+                outline: none
+            }
+        </style>
+    </head>
+
+    <body>
+        <div>
+            <p>Curl 命令:</p>
+            <div style="border: 1px solid #ddd;">
+                <textarea id="bash" style="width: 100%;" class="file-editor-textarea js-code-textarea"></textarea>
+            </div>
+            <p><button onclick="convertCurl();">Convert</button></p>
+            <p>PHP:</p>
+            <div style="border: 1px solid #ddd;">
+                <textarea id="php" style="width: 100%;" data-codemirror-mode="text/x-sh" class="file-editor-textarea js-code-textarea"></textarea>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        var bashCodeEditor = CodeMirror.fromTextArea(document.getElementById('bash'), {
+            mode: "shell",
+            theme: "github-light",
+            lineNumbers: true,
+            scrollbarStyle: "simple"
+            // lineWrapping: true
+        });
+
+        var phpCodeEditor = CodeMirror.fromTextArea(document.getElementById('php'), {
+            mode: "application/x-httpd-php",
+            theme: "github-light",
+            matchBrackets: true,
+            lineNumbers: true,
+            indentUnit: 4,
+            scrollbarStyle: "simple"
+            // lineWrapping: true
+        });
+
+        window.onresize = function(event) {
+            phpCodeEditor.setSize(null, (document.body.clientHeight - 598 < 0 ? 300 : document.body.clientHeight - 298) + 'px');
+        };
+
+        phpCodeEditor.setSize(null, (document.body.clientHeight - 598 < 0 ? 300 : document.body.clientHeight - 298) + 'px');
+
+        var parseStr = function(str) {
+            var strArr = String(str).replace(/^&/, '').replace(/&$/, '').split('&');
+            var sal = strArr.length, i, j, ct, p, lastObj, obj, undef, chr, tmp, key, value, postLeftBracketPos, keys, keysLen, array = {}, $global = (typeof window !== 'undefined' ? window : global),
+                _fixStr = function (str) {
+                    var tmp = '';
+                    try {
+                        tmp = decodeURIComponent(str.replace(/\+/g, '%20'));
+                    } catch (e) {
+                        tmp = str.replace(/\+/g, '%20');
+                    }
+                    return tmp;
+                };
+            $global.$locutus = $global.$locutus || {};
+            var $locutus = $global.$locutus;
+            $locutus.php = $locutus.php || {};
+            if (!array) {
+                array = $global;
+            }
+            for (i = 0; i < sal; i++) {
+                tmp = strArr[i].split('=');
+                key = _fixStr(tmp[0]);
+                value = (tmp.length < 2) ? '' : _fixStr(tmp[1]);
+                while (key.charAt(0) === ' ') {
+                    key = key.slice(1);
+                }
+                if (key.indexOf('\x00') > -1) {
+                    key = key.slice(0, key.indexOf('\x00'));
+                }
+                if (key && key.charAt(0) !== '[') {
+                    keys = [];
+                    postLeftBracketPos = 0;
+                    for (j = 0; j < key.length; j++) {
+                        if (key.charAt(j) === '[' && !postLeftBracketPos) {
+                            postLeftBracketPos = j + 1;
+                        } else if (key.charAt(j) === ']') {
+                            if (postLeftBracketPos) {
+                                if (!keys.length) {
+                                    keys.push(key.slice(0, postLeftBracketPos - 1));
+                                }
+                                keys.push(key.substr(postLeftBracketPos, j - postLeftBracketPos));
+                                postLeftBracketPos = 0;
+                                if (key.charAt(j + 1) !== '[') {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (!keys.length) {
+                        keys = [key];
+                    }
+                    for (j = 0; j < keys[0].length; j++) {
+                        chr = keys[0].charAt(j);
+                        if (chr === ' ' || chr === '.' || chr === '[') {
+                            keys[0] = keys[0].substr(0, j) + '_' + keys[0].substr(j + 1);
+                        }
+                        if (chr === '[') {
+                            break;
+                        }
+                    }
+                    obj = array;
+                    for (j = 0, keysLen = keys.length; j < keysLen; j++) {
+                        key = keys[j].replace(/^['"]/, '').replace(/['"]$/, '');
+                        lastObj = obj;
+                        if ((key !== '' && key !== ' ') || j === 0) {
+                            if (obj[key] === undef) {
+                                obj[key] = {};
+                            }
+                            obj = obj[key];
+                        } else {
+                            ct = -1;
+                            for (p in obj) {
+                                if (obj.hasOwnProperty(p)) {
+                                    if (+p > ct && p.match(/^\d+$/g)) {
+                                        ct = +p;
+                                    }
+                                }
+                            }
+                            key = ct + 1;
+                        }
+                    }
+                    lastObj[key] = value;
+                }
+            }
+            return array;
+        };
+
+        var rightPad = function(str, len) {
+            return str.length >= ~~len ? str : str + (new Array(~~len - str.length + 1).join(' '));
+        };
+
+        // https://github.com/substack/node-shell-quote
+
+        var parseCommand = function(command) {
+            var SINGLE_QUOTE = '"((\\\\"|[^"])*?)"';
+            var DOUBLE_QUOTE = '\'((\\\\\'|[^\'])*?)\'';
+            var CONTROL = '(?:' + [
+                '\\|\\|', '\\&\\&', ';;', '\\|\\&', "[&;()|<>\n]"
+            ].join('|') + ')';
+            var META = '|&;()<> \\t';
+            var BAREWORD = '(\\\\[\'"' + META + ']|[^\\s\'"' + META + '])+';
+
+            var TOKEN = '';
+            for (var i = 0; i < 4; i++) {
+                TOKEN += (Math.pow(16,8)*Math.random()).toString(16);
+            }
+
+            command = command.replace(/\\\n/g, '');
+
+            var commandArgus = (function (s, env) {
+                var chunker = new RegExp([
+                    '(' + CONTROL + ')', // control chars
+                    '(' + BAREWORD + '|' + SINGLE_QUOTE + '|' + DOUBLE_QUOTE + ')*'
+                ].join('|'), 'g');
+                var match = s.match(chunker).filter(function(value) { return value !== ''; });
+                var commented = false;
+
+                if (!match) return [];
+                if (!env) env = {};
+
+                return match.map(function (s, j) {
+                    if (commented) {
+                        return;
+                    }
+                    if (RegExp('^' + CONTROL + '$').test(s)) {
+                        return { op: s };
+                    }
+
+
+                    // Hand-written scanner/parser for Bash quoting rules:
+                    //
+                    //  1. inside single quotes, all characters are printed literally.
+                    //  2. inside double quotes, all characters are printed literally
+                    //     except variables prefixed by '$' and backslashes followed by
+                    //     either a double quote or another backslash.
+                    //  3. outside of any quotes, backslashes are treated as escape
+                    //     characters and not printed (unless they are themselves escaped)
+                    //  4. quote context can switch mid-token if there is no whitespace
+                    //     between the two quote contexts (e.g. all'one'"token" parses as
+                    //     "allonetoken")
+                    var SQ = "'";
+                    var DQ = '"';
+                    var DS = '$';
+                    var BS = '\\';
+                    var quote = false;
+                    var esc = false;
+                    var out = '';
+                    var isGlob = false;
+                    var isDSString = false;
+
+                    for (var i = 0, len = s.length; i < len; i++) {
+                        var c = s.charAt(i);
+                        isGlob = isGlob || (!quote && (c === '*' || c === '?'));
+                        if (isDSString) {
+                            if (c === BS) {
+                                i += 1;
+                                c = s.charAt(i);
+                                if (c === BS || c === quote) {
+                                    out += c;
+                                } else {
+                                    if (quote === SQ && c === DQ) {
+                                        out += c;
+                                    } else {
+                                        out += BS + c;
+                                    }
+                                }
+                            } else {
+                                if (c === quote) {
+                                    quote = false;
+                                    isDSString = false;
+                                } else {
+                                    out += c;
+                                }
+                            }
+                        } else if (esc) {
+                            out += c;
+                            esc = false;
+                        } else if (quote) {
+                            if (c === quote) {
+                                quote = false;
+                            } else if (quote == SQ) {
+                                out += c;
+                            } else { // Double quote
+                                if (c === BS) {
+                                    i += 1;
+                                    c = s.charAt(i);
+                                    if (c === DQ || c === BS || c === DS) {
+                                        out += c;
+                                    } else {
+                                        out += BS + c;
+                                    }
+                                } else if (c === DS) {
+                                    out += parseEnvVar();
+                                } else {
+                                    out += c;
+                                }
+                            }
+                        } else if (c === DQ || c === SQ) {
+                            quote = c;
+                        } else if (RegExp('^' + CONTROL + '$').test(c)) {
+                            return { op: s };
+                        } else if (RegExp('^#$').test(c)) {
+                            commented = true;
+                            if (out.length){
+                                return [out, { comment: s.slice(i+1) + match.slice(j+1).join(' ') }];
+                            }
+                            return [{ comment: s.slice(i+1) + match.slice(j+1).join(' ') }];
+                        } else if (c === BS) {
+                            esc = true;
+                        } else if (c === DS) {
+                            out += parseEnvVar();
+                        } else out += c;
+                    }
+
+                    if (isGlob) return {op: 'glob', pattern: out};
+
+                    return out;
+
+                    function parseEnvVar() {
+                        i += 1;
+                        var varend, varname;
+                        //debugger
+                        if (s.charAt(i) === '{') {
+                            i += 1;
+                            if (s.charAt(i) === '}') {
+                                throw new Error("Bad substitution: " + s.substr(i - 2, 3));
+                            }
+                            varend = s.indexOf('}', i);
+                            if (varend < 0) {
+                                throw new Error("Bad substitution: " + s.substr(i));
+                            }
+                            varname = s.substr(i, varend - i);
+                            i = varend;
+                        } else if (/[*@#?$!_\-]/.test(s.charAt(i))) {
+                            varname = s.charAt(i);
+                            i += 1;
+                        } else if (s.charAt(i) === SQ || s.charAt(i) === DQ) {
+                            isDSString = true;
+                            quote = s.charAt(i);
+                        } else {
+                            varend = s.substr(i).match(/[^\w\d_]/);
+                            if (!varend) {
+                                varname = s.substr(i);
+                                i = s.length;
+                            } else {
+                                varname = s.substr(i, varend.index);
+                                i += varend.index - 1;
+                            }
+                        }
+                        return getVar(null, '', varname);
+                    }
+                })
+                // finalize parsed aruments
+                .reduce(function(prev, arg){
+                    if (arg === undefined){
+                        return prev;
+                    }
+                    return prev.concat(arg);
+                },[]);
+
+                function getVar (_, pre, key) {
+                    var r = typeof env === 'function' ? env(key) : env[key];
+                    if (r === undefined) r = '';
+
+                    if (typeof r === 'object') {
+                        return pre + TOKEN + json.stringify(r) + TOKEN;
+                    }
+                    else return pre + r;
+                }
+            })(command, {});
+
+            if (commandArgus.length === 0) {
+                return [];
+            }
+
+            var commandIndex = 0, returnCommands = [[]];
+
+            for (var i = 0; i < commandArgus.length; i++) {
+                if (typeof commandArgus[i] === 'object' && commandArgus[i]['op'] !== void 0) {
+                    if (returnCommands[commandIndex].length) {
+                        returnCommands.push([]);
+                        commandIndex = returnCommands.length - 1;
+                    }
+                    continue;
+                }
+                returnCommands[commandIndex].push(commandArgus[i]);
+            }
+
+            return returnCommands;
+        };
+
+        var renderToCodeDom = function(msg) {
+            if (arguments[1] !== void 0) {
+                phpCodeEditor.setValue("<?php\nuse CustomCurl\\Client;\n\n");
+            }
+            phpCodeEditor.setValue(phpCodeEditor.getValue() + msg);
+        };
+
+        var aliases = { // letter: [lname, ([ARG_NONE, ARG_BOOL, ARG_STRING])]
+                "*@": ["url",                      2],
+                "*4": ["dns-ipv4-addr",            2],
+                "*6": ["dns-ipv6-addr",            2],
+                "*a": ["random-file",              2],
+                "*b": ["egd-file",                 2],
+                "*B": ["oauth2-bearer",            2],
+                "*c": ["connect-timeout",          2],
+                "*d": ["ciphers",                  2],
+                "*D": ["dns-interface",            2],
+                "*e": ["disable-epsv",             1],
+                "*E": ["epsv",                     1],
+                "*F": ["dns-servers",              2],
+                "*g": ["trace",                    2],
+                "*G": ["npn",                      1],
+                "*h": ["trace-ascii",              2],
+                "*H": ["alpn",                     1],
+                "*i": ["limit-rate",               2],
+                "*j": ["compressed",               1],
+                "*J": ["tr-encoding",              1],
+                "*k": ["digest",                   1],
+                "*l": ["negotiate",                1],
+                "*m": ["ntlm",                     1],
+                "*M": ["ntlm-wb",                  1],
+                "*n": ["basic",                    1],
+                "*o": ["anyauth",                  1],
+                "*p": ["wdebug",                   1],
+                "*q": ["ftp-create-dirs",          1],
+                "*r": ["create-dirs",              1],
+                "*s": ["max-redirs",               2],
+                "*t": ["proxy-ntlm",               1],
+                "*u": ["crlf",                     1],
+                "*v": ["stderr",                   2],
+                "*w": ["interface",                2],
+                "*x": ["krb",                      2],
+                "*x": ["krb4",                     2],
+                "*y": ["max-filesize",             2],
+                "*z": ["disable-eprt",             1],
+                "*Z": ["eprt",                     1],
+                "*~": ["xattr",                    1],
+                "$a": ["ftp-ssl",                  1],
+                "$a": ["ssl",                      1],
+                "$b": ["ftp-pasv",                 1],
+                "$c": ["socks5",                   2],
+                "$d": ["tcp-nodelay",              1],
+                "$e": ["proxy-digest",             1],
+                "$f": ["proxy-basic",              1],
+                "$g": ["retry",                    2],
+                "$V": ["retry-connrefused",        1],
+                "$h": ["retry-delay",              2],
+                "$i": ["retry-max-time",           2],
+                "$k": ["proxy-negotiate",          1],
+                "$m": ["ftp-account",              2],
+                "$n": ["proxy-anyauth",            1],
+                "$o": ["trace-time",               1],
+                "$p": ["ignore-content-length",    1],
+                "$q": ["ftp-skip-pasv-ip",         1],
+                "$r": ["ftp-method",               2],
+                "$s": ["local-port",               2],
+                "$t": ["socks4",                   2],
+                "$T": ["socks4a",                  2],
+                "$u": ["ftp-alternative-to-user",  2],
+                "$v": ["ftp-ssl-reqd",             1],
+                "$v": ["ssl-reqd",                 1],
+                "$w": ["sessionid",                1],
+                "$x": ["ftp-ssl-control",          1],
+                "$y": ["ftp-ssl-ccc",              1],
+                "$j": ["ftp-ssl-ccc-mode",         2],
+                "$z": ["libcurl",                  2],
+                "$#": ["raw",                      1],
+                "$0": ["post301",                  1],
+                "$1": ["keepalive",                1],
+                "$2": ["socks5-hostname",          2],
+                "$3": ["keepalive-time",           2],
+                "$4": ["post302",                  1],
+                "$5": ["noproxy",                  2],
+                "$7": ["socks5-gssapi-nec",        1],
+                "$8": ["proxy1.0",                 2],
+                "$9": ["tftp-blksize",             2],
+                "$A": ["mail-from",                2],
+                "$B": ["mail-rcpt",                2],
+                "$C": ["ftp-pret",                 1],
+                "$D": ["proto",                    2],
+                "$E": ["proto-redir",              2],
+                "$F": ["resolve",                  2],
+                "$G": ["delegation",               2],
+                "$H": ["mail-auth",                2],
+                "$I": ["post303",                  1],
+                "$J": ["metalink",                 1],
+                "$K": ["sasl-ir",                  1],
+                "$L": ["test-event",               1],
+                "$M": ["unix-socket",              2],
+                "$N": ["path-as-is",               1],
+                "$O": ["socks5-gssapi-service",    2],
+                "$O": ["proxy-service-name",       2],
+                "$P": ["service-name",             2],
+                "$Q": ["proto-default",            2],
+                "$R": ["expect100-timeout",        2],
+                "$S": ["tftp-no-options",          1],
+                "$U": ["connect-to",               2],
+                "$W": ["abstract-unix-socket",     2],
+                "$X": ["tls-max",                  2],
+                "$Y": ["suppress-connect-headers", 1],
+                "0":  ["http1.0",                  0],
+                "01": ["http1.1",                  0],
+                "02": ["http2",                    0],
+                "03": ["http2-prior-knowledge",    0],
+                "1":  ["tlsv1",                    0],
+                "10": ["tlsv1.0",                  0],
+                "11": ["tlsv1.1",                  0],
+                "12": ["tlsv1.2",                  0],
+                "13": ["tlsv1.3",                  0],
+                "2":  ["sslv2",                    0],
+                "3":  ["sslv3",                    0],
+                "4":  ["ipv4",                     0],
+                "6":  ["ipv6",                     0],
+                "a":  ["append",                   1],
+                "A":  ["user-agent",               2],
+                "b":  ["cookie",                   2],
+                "B":  ["use-ascii",                1],
+                "c":  ["cookie-jar",               2],
+                "C":  ["continue-at",              2],
+                "d":  ["data",                     2],
+                "dr": ["data-raw",                 2],
+                "da": ["data-ascii",               2],
+                "db": ["data-binary",              2],
+                "de": ["data-urlencode",           2],
+                "D":  ["dump-header",              2],
+                "e":  ["referer",                  2],
+                "E":  ["cert",                     2],
+                "Ea": ["cacert",                   2],
+                "Eb": ["cert-type",                2],
+                "Ec": ["key",                      2],
+                "Ed": ["key-type",                 2],
+                "Ee": ["pass",                     2],
+                "Ef": ["engine",                   2],
+                "Eg": ["capath",                   2],
+                "Eh": ["pubkey",                   2],
+                "Ei": ["hostpubmd5",               2],
+                "Ej": ["crlfile",                  2],
+                "Ek": ["tlsuser",                  2],
+                "El": ["tlspassword",              2],
+                "Em": ["tlsauthtype",              2],
+                "En": ["ssl-allow-beast",          1],
+                "Eo": ["login-options",            2],
+                "Ep": ["pinnedpubkey",             2],
+                "Eq": ["cert-status",              1],
+                "Er": ["false-start",              1],
+                "Es": ["ssl-no-revoke",            1],
+                "Et": ["tcp-fastopen",             1],
+                "Eu": ["proxy-tlsuser",            2],
+                "Ev": ["proxy-tlspassword",        2],
+                "Ew": ["proxy-tlsauthtype",        2],
+                "Ex": ["proxy-cert",               2],
+                "Ey": ["proxy-cert-type",          2],
+                "Ez": ["proxy-key",                2],
+                "E0": ["proxy-key-type",           2],
+                "E1": ["proxy-pass",               2],
+                "E2": ["proxy-ciphers",            2],
+                "E3": ["proxy-crlfile",            2],
+                "E4": ["proxy-ssl-allow-beast",    1],
+                "E5": ["login-options",            2],
+                "E6": ["proxy-cacert",             2],
+                "E7": ["proxy-capath",             2],
+                "E8": ["proxy-insecure",           1],
+                "E9": ["proxy-tlsv1",              0],
+                "EA": ["socks5-basic",             1],
+                "EB": ["socks5-gssapi",            1],
+                "f":  ["fail",                     1],
+                "fa": ["fail-early",               1],
+                "F":  ["form",                     2],
+                "Fs": ["form-string",              2],
+                "g":  ["globoff",                  1],
+                "G":  ["get",                      0],
+                "Ga": ["request-target",           2],
+                "h":  ["help",                     1],
+                "H":  ["header",                   2],
+                "Hp": ["proxy-header",             2],
+                "i":  ["include",                  1],
+                "I":  ["head",                     1],
+                "j":  ["junk-session-cookies",     1],
+                "J":  ["remote-header-name",       1],
+                "k":  ["insecure",                 1],
+                "K":  ["config",                   2],
+                "l":  ["list-only",                1],
+                "L":  ["location",                 1],
+                "Lt": ["location-trusted",         1],
+                "m":  ["max-time",                 2],
+                "M":  ["manual",                   1],
+                "n":  ["netrc",                    1],
+                "no": ["netrc-optional",           1],
+                "ne": ["netrc-file",               2],
+                "N":  ["buffer",                   1],
+                "o":  ["output",                   2],
+                "O":  ["remote-name",              0],
+                "Oa": ["remote-name-all",          1],
+                "p":  ["proxytunnel",              1],
+                "P":  ["ftp-port",                 2],
+                "q":  ["disable",                  1],
+                "Q":  ["quote",                    2],
+                "r":  ["range",                    2],
+                "R":  ["remote-time",              1],
+                "s":  ["silent",                   1],
+                "S":  ["show-error",               1],
+                "t":  ["telnet-option",            2],
+                "T":  ["upload-file",              2],
+                "u":  ["user",                     2],
+                "U":  ["proxy-user",               2],
+                "v":  ["verbose",                  1],
+                "V":  ["version",                  1],
+                "w":  ["write-out",                2],
+                "x":  ["proxy",                    2],
+                "xa": ["preproxy",                 2],
+                "X":  ["request",                  2],
+                "Y":  ["speed-limit",              2],
+                "y":  ["speed-time",               2],
+                "z":  ["time-cond",                2],
+                "#":  ["progress-bar",             1],
+                ":":  ["next",                     0],
+            },
+            userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36',
+            tmpUserAgent;
+
+        var lnameLetter = {};
+
+        for (var i in aliases) {
+            lnameLetter[aliases[i][0]] = i;
+        }
+
+        var isEmptyObject = function(e) {
+            for (var t in e) {
+                return !1;
+            }
+            return !0;
+        };
+
+        var convertCurl = function() {
+            renderToCodeDom('', true);
+            var commands = parseCommand(bashCodeEditor.getValue()), hasCommand = false;
+            tmpUserAgent = userAgent;
+            for (var i = 0; i < commands.length; i++) {
+                if (commands[i].length) {
+                    hasCommand = true;
+                    doConvertCurl(commands[i], i);
+                }
+            }
+            if (!hasCommand) {
+                renderToCodeDom("// 没有输入命令");
+            }
+        };
+
+        var doConvertCurl = function(commandArgs, requestI) {
+            if (!commandArgs.length) {
+                return false;
+            }
+
+            if (commandArgs[0] !== 'curl') {
+                renderToCodeDom("// 输入命令不合法\n\n");
+                return false;
+            }
+
+            var headers = {},
+                postFields = {},
+                url = '',
+                method = 'get',
+                cookies = [],
+                timeout = 5,
+                postJson = false,
+                postForm = false;
+
+            var getParameter = function(flag, nextArg) {
+                var usedArg = false;
+                if (flag[0] !== '-' || flag.substr(0, 2) === '--') {
+                    // this should be a long name
+                    var word = (flag[0] === '-') ? flag.substring(2) : flag;
+                    var letter = lnameLetter[word];
+                } else {
+                    var letter = flag.substring(1);
+                }
+
+                if (aliases[letter] === void 0) {
+                    return '无效参数 ' + flag;
+                }
+
+                switch (letter) {
+                    case '*@':
+                        url = nextArg;
+                        break;
+                    case 'A':
+                        headers['User-Agent'] = nextArg;
+                        usedArg = true;
+                        break;
+                    case 'b':
+                        cookies.push(nextArg);
+                        usedArg = true;
+                        break;
+                    case 'd':
+                    case 'de':
+                        if (typeof postFields !== 'object') {
+                            break;
+                        }
+                        method = method === 'get' ? 'post' : method;
+                        Object.assign(postFields, parseStr(nextArg));
+                        usedArg = true;
+                        break;
+                    case 'dr':
+                    case 'da':
+                    case 'db':
+                        if (letter === 'dr' && (postJson || postForm)) {
+                            Object.assign(postFields, postJson ? JSON.parse(nextArg) : parseStr(nextArg));
+                        } else {
+                            postFields = nextArg;
+                        }
+                        method = method === 'get' ? 'post' : method;
+                        usedArg = true;
+                        break;
+                    case 'e':
+                        headers['Referer'] = nextArg;
+                        usedArg = true;
+                        break;
+                    case 'F':
+                        var form = nextArg.match(/^(.*?)=(.*?)$/);
+                        if (form) {
+                            postFields[form[1]] = form[2];
+                        }
+                        usedArg = true;
+                        break;
+                    case 'G':
+                        method = 'get';
+                        break;
+                    case 'H':
+                        var header = nextArg.match(/^(.*?): (.*?)$/);
+                        if (header) {
+                            switch (header[1].toLowerCase()) {
+                                case 'content-type':
+                                    if (header[2].indexOf("json") > -1) {
+                                        postJson = true;
+                                    } else if (header[2].indexOf("www-form-urlencoded") > -1) {
+                                        postForm = true;
+                                    } else {
+                                        headers[header[1]] = header[2];
+                                    }
+                                    break;
+                                case 'cookie':
+                                    cookies.push(header[2]);
+                                    break;
+                                default:
+                                    headers[header[1]] = header[2];
+                            }
+                        }
+                        usedArg = true;
+                        break;
+                    case 'm':
+                        timeout = ~~nextArg;
+                        usedArg = true;
+                        break;
+                    case 'u':
+                        headers['Authorization'] = 'Basic ' + btoa(nextArg);
+                        usedArg = true;
+                        break;
+                    case 'X':
+                        method = nextArg;
+                        usedArg = true;
+                        break;
+                    default:
+                        usedArg = aliases[letter][1] === 2;
+                }
+
+                return ~~usedArg;
+            };
+
+            for (var i = 1, stillflags = true; i < commandArgs.length; i++) {
+                if (stillflags && commandArgs[i][0] === '-') {
+                    var flag = commandArgs[i];
+
+                    if (commandArgs[i] === '--') {
+                        stillflags = false;
+                    } else {
+                        var nextArg = (i < (commandArgs.length - 1)) ? commandArgs[i + 1] : null;
+                        var step = getParameter(flag, nextArg);
+                        if (typeof step === 'string') {
+                            renderToCodeDom("// " + step + "\n\n");
+                            return false;
+                        } else {
+                            i += step;
+                        }
+                    }
+                } else {
+                    var step = getParameter("--url", commandArgs[i]);
+                    if (typeof step === 'string') {
+                        renderToCodeDom("// " + step + "\n\n");
+                        return false;
+                    } else {
+                        i += step;
+                    }
+                }
+            }
+
+            if (!url) {
+                renderToCodeDom("// 输入命令不合法\n\n");
+                return false;
+            }
+
+            if ((['GET', 'POST', 'PUT', 'DELETE']).indexOf(method.toUpperCase()) === -1) {
+                renderToCodeDom('// ' + method.toUpperCase() + " 头不做处理\n\n");
+                return false;
+            }
+
+            var op = "$curlObj" + requestI + " = Client::init('__url__'__method__)\n"
+                        .replace('__url__', url)
+                        .replace('__method__', (method.toUpperCase() === 'GET' ? '' : (", '" + method.toUpperCase() + "'")));
+
+            if (timeout !== 5) {
+                op += "    ->set('timeout', " + timeout + ")\n";
+            }
+
+            if (postJson) {
+                op += "    ->set('postType', 'json')\n";
+            }
+
+            for (var i in headers) {
+                switch (i.toLowerCase()) {
+                    case 'user-agent':
+                        if (headers[i] !== tmpUserAgent) {
+                            op = "Client::setConf('userAgent', '" + headers[i].replace('\'', '\\\'') + "');\n\n" + op;
+                            tmpUserAgent = headers[i];
+                        }
+                        // op += "    ->set('userAgent', '" + headers[i] + "')\n";
+                        break;
+                    case 'referer':
+                        op += "    ->set('referer', '" + headers[i] + "')\n";
+                        break;
+                    default:
+                        op += "    ->setHeader('" + i + "', '" + headers[i] + "')\n";
+                }
+            }
+
+            for (var i = 0; i < cookies.length; i++) {
+                op += "    ->setCookies('" + cookies[i] + "'" + (i ? ', true' : '') + ")\n";
+            }
+
+            if (typeof postFields !== 'string' || postJson) {
+                if (JSON.stringify(postFields) !== '{}') {
+                    op += "    ->set('postFields', [\n";
+                }
+
+                var getPHPArray = function(f) {
+                    var opS = '', tabs = arguments[1] || '        ', maxLength = 0;
+                    for (var i in f) {
+                        maxLength = i.length > maxLength ? i.length : maxLength;
+                    };
+
+                    for (var i in f) {
+                        if (typeof f[i] === 'object' && f[i] !== null) {
+                            opS += tabs + (toString.apply(f) === '[object Array]' ? '' : (rightPad((typeof i === 'string' ? ('\'' + i.replace(/'/g, '\\\'') + '\'') : i), maxLength + 2) + ' => ')) + "[\n";
+                            opS += getPHPArray(f[i], tabs + '    ');
+                            opS += tabs + "],\n";
+                        } else {
+                            opS += tabs + (toString.apply(f) === '[object Array]' ? '' : (rightPad((typeof i === 'string' ? ('\'' + i.replace(/'/g, '\\\'') + '\'') : i), maxLength + 2) + ' => ')) + (typeof f[i] === 'string' ? ('\'' + f[i].replace(/'/g, '\\\'') + '\'') : f[i]) + ",\n";
+                        }
+                    }
+                    return opS;
+                };
+
+                if (postJson && !isEmptyObject(postFields) && typeof postFields !== 'object') {
+                    var postObj = [];
+                    try {
+                        var tmp = JSON.parse(postFields);
+                        postObj = tmp;
+                    } catch (e) {
+                        renderToCodeDom("// JSON 字符串解析失败\n\n");
+                    }
+                    op += getPHPArray(postObj);
+                } else {
+                    op += getPHPArray(postFields);
+                }
+
+                if (JSON.stringify(postFields) !== '{}') {
+                    op = op.replace(/,\n( +)\]/g, "\n$1]").replace(/,\n$/, "\n");
+                    op += "    ])\n";
+                }
+            } else {
+                op += "    ->set('postFields', \"" + postFields.replace(/"/g, '\\"') + "\")\n";
+            }
+
+            renderToCodeDom(op + "\
+    ->exec();\n\
+\n\
+if (!$curlObj" + requestI + "->getStatus()) {\n\
+    throw new \\Exception('Curl Error', $curlObj" + requestI + "->getCurlErrNo());\n\
+}\n\
+\n\
+var_dump($curlObj" + requestI + "->getHeader(), $curlObj" + requestI + "->getCookies(), $curlObj" + requestI + "->getBody(), $curlObj" + requestI + "->getInfo());\n\
+\n");
+        };
+    </script>
+</html>
