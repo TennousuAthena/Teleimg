@@ -7,6 +7,12 @@ require __DIR__ . '/vendor/autoload.php';
 
 $router = new Router\Router();
 
+$router->get('/', function() {
+    header("content-type:text/html; charset:utf-8");
+    echo file_get_contents("assets/html/index.html");
+});
+
+
 $router->post('upload', function() {
     header("content-type:application/json; charset:utf-8");
     $curlObj = Client::init('https://telegra.ph/upload', 'post')
