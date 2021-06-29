@@ -35,12 +35,13 @@ $router->get('/file/(.*)', function($name) {
     $curlObj = Client::init('https://telegra.ph/file/'.$name)->exec();
 
     if (!$curlObj->getStatus()) {
-        throw new \Exception('Curl Error', $curlObj->getCurlErrNo());
+        throw new Exception('Curl Error', $curlObj->getCurlErrNo());
     }
-    $start = strpos($curlObj->getHeader(), "content-type");
-    $end = strpos($curlObj->getHeader(), "content-length");
+    $header = strtolower($curlObj->getHeader());
+    $start = strpos($header, "content-type");
+    $end = strpos($header, "content-length");
     if($curlObj->getInfo()['http_code'] === 200) {
-        header("content-type: ".substr($curlObj->getHeader(), $start+14, $end-$start-16));
+        header("content-type: ".substr($header, $start+14, $end-$start-16));
         echo $curlObj->getBody();
     }else{
         header("content-type: image/jpeg");
