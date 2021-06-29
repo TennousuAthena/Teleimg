@@ -38,7 +38,7 @@ $router->get('/file/(.*)', function($name) {
         echo $curlObj->getBody();
     }else{
         header("content-type: image/jpeg");
-        echo file_get_contents(__DIR__ . "/akkarin.jpg");
+        echo file_get_contents(__DIR__ . "/assets/img/akkarin.jpg");
     }
 });
 
