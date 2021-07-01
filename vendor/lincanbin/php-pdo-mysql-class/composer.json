@@ -1,0 +1,27 @@
+{
+    "name": "lincanbin/php-pdo-mysql-class",
+    "keywords": [
+        "pdo",
+        "mysql",
+        "database",
+        "iterator"
+    ],
+    "description": "A PHP MySQL PDO class similar to the Python MySQLdb, which supports iterator and parameter binding when using 'WHERE IN' statement.",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "lincanbin",
+            "email": "lincanbin@hotmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.6",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*"
+    },
+    "autoload": {
+        "files": [
+            "src/PDO.class.php"
+        ]
+    }
+}

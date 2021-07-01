@@ -123,6 +123,63 @@
                 "source": "https://github.com/jshensh/php-curl-class/tree/0.0.18"
             },
             "install-path": "../jshensh/php-curl-class"
+        },
+        {
+            "name": "lincanbin/php-pdo-mysql-class",
+            "version": "v2.2",
+            "version_normalized": "2.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lincanbin/PHP-PDO-MySQL-Class.git",
+                "reference": "7517d30ffc514a3c54217717b97721ab394fa87a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lincanbin/PHP-PDO-MySQL-Class/zipball/7517d30ffc514a3c54217717b97721ab394fa87a",
+                "reference": "7517d30ffc514a3c54217717b97721ab394fa87a",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "ext-pdo": "*",
+                "ext-pdo_mysql": "*",
+                "php": ">=5.3.6"
+            },
+            "time": "2020-11-27T02:02:36+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "src/PDO.class.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "lincanbin",
+                    "email": "lincanbin@hotmail.com"
+                }
+            ],
+            "description": "A PHP MySQL PDO class similar to the Python MySQLdb, which supports iterator and parameter binding when using 'WHERE IN' statement.",
+            "keywords": [
+                "database",
+                "iterator",
+                "mysql",
+                "pdo"
+            ],
+            "support": {
+                "issues": "https://github.com/lincanbin/PHP-PDO-MySQL-Class/issues",
+                "source": "https://github.com/lincanbin/PHP-PDO-MySQL-Class/tree/v2.2"
+            },
+            "install-path": "../lincanbin/php-pdo-mysql-class"
         }
     ],
     "dev": true,

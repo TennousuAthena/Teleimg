@@ -3,6 +3,7 @@
         "bramus/router": "~1.5",
         "jshensh/php-curl-class": "^0.0.18",
       "ext-curl": "*",
-      "ext-json": "*"
+      "ext-json": "*",
+        "lincanbin/php-pdo-mysql-class": "^2.2"
     }
 }

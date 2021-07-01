@@ -3,6 +3,7 @@ use CustomCurl\Client;
 use Bramus\Router;
 header("x-powered-by: Teleimg v0.1beta");
 
+require __DIR__ . '/class/sqlite.class.php';
 require __DIR__ . '/vendor/autoload.php';
 
 $router = new Router\Router();
