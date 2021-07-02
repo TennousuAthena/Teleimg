@@ -4,6 +4,8 @@
         "jshensh/php-curl-class": "^0.0.18",
       "ext-curl": "*",
       "ext-json": "*",
-        "lincanbin/php-pdo-mysql-class": "^2.2"
+      "ext-sqlite": "*",
+        "lincanbin/php-pdo-mysql-class": "^2.2",
+
     }
 }

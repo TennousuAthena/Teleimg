@@ -3,7 +3,6 @@ use CustomCurl\Client;
 use Bramus\Router;
 header("x-powered-by: Teleimg v0.1beta");
 
-require __DIR__ . '/class/sqlite.class.php';
 require __DIR__ . '/vendor/autoload.php';
 
 $router = new Router\Router();
@@ -13,15 +12,25 @@ $router->get('/', function() {
     echo file_get_contents("assets/html/index.html");
 });
 
+$router->get('/test', function() {
+    try {
+        $pdo = new PDO('sqlite:assets/data/teleimg.db');
+
+    }catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+    $data = $pdo->query('SELECT * FROM "main"."img"')->fetchAll();
+    var_dump($data);
+});
 
 $router->post('upload', function() {
     header("content-type:application/json; charset:utf-8");
     header("Cache-control: no-cache");
     $curlObj = Client::init('https://telegra.ph/upload', 'post')
+        ->setHeader('User-Agent', getallheaders()['User-Agent'])
         ->set('postFields', ['file' => new CURLFile($_FILES["file"]["tmp_name"])])
         ->set('postFieldsBuildQuery', false)
         ->exec();
-
     if (!$curlObj->getStatus()) {
         exit(json_encode($curlObj->getCurlErrNo()));
     }
@@ -29,15 +38,20 @@ $router->post('upload', function() {
     if ($curlObj->getInfo()['http_code'] !== 200||$body == "" || !is_array($body)) {
         halt("Failed to upload");
     }
+
+//    $db = new SQLite(__DIR__ . '/assets/data/teleimg.db');
+
     echo json_encode(['success'=> 1, "src"=>$body[0]->src]);
 });
 
 $router->get('/file/(.*)', function($name) {
 
-    $curlObj = Client::init('https://telegra.ph/file/'.$name)->exec();
+    $curlObj = Client::init('https://telegra.ph/file/'.$name)
+        ->setHeader('User-Agent', getallheaders()['User-Agent'])
+        ->exec();
 
     if (!$curlObj->getStatus()) {
-        throw new Exception('Curl Error', $curlObj->getCurlErrNo());
+        echo file_get_contents(__DIR__ . "/assets/img/akkarin.jpg");
     }
     $header = strtolower($curlObj->getHeader());
     $start = strpos($header, "content-type");
