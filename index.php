@@ -4,7 +4,7 @@ use Bramus\Router;
 header("x-powered-by: Teleimg v0.1");
 
 require __DIR__ . '/vendor/autoload.php';
-require __DIR__ . '/class/db.class.php';
+require __DIR__ . '/class/DB.class.php';
 
 $router = new Router\Router();
 
