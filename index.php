@@ -1,9 +1,10 @@
 <?php
 use CustomCurl\Client;
 use Bramus\Router;
-header("x-powered-by: Teleimg v0.1beta");
+header("x-powered-by: Teleimg v0.1");
 
 require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/class/db.class.php';
 
 $router = new Router\Router();
 
@@ -13,14 +14,6 @@ $router->get('/', function() {
 });
 
 $router->get('/test', function() {
-    try {
-        $pdo = new PDO('sqlite:assets/data/teleimg.db');
-
-    }catch (PDOException $e) {
-        echo $e->getMessage();
-    }
-    $data = $pdo->query('SELECT * FROM "main"."img"')->fetchAll();
-    var_dump($data);
 });
 
 $router->post('upload', function() {
@@ -36,21 +29,33 @@ $router->post('upload', function() {
     }
     $body = json_decode($curlObj->getBody());
     if ($curlObj->getInfo()['http_code'] !== 200||$body == "" || !is_array($body)) {
+        http_response_code($curlObj->getInfo()['http_code']);
         halt("Failed to upload");
     }
 
-//    $db = new SQLite(__DIR__ . '/assets/data/teleimg.db');
-
+    $data = new database('assets/data/teleimg.db');
+    $fileName = str_replace("/file/", "", $body[0]->src);
+    $data->insert($fileName);
     echo json_encode(['success'=> 1, "src"=>$body[0]->src]);
 });
 
 $router->get('/file/(.*)', function($name) {
+    $data = new database('assets/data/teleimg.db');
+    if(!$data->fetchName($name)){
+        http_response_code(403);
+        header("content-type: image/jpeg");
+//        header("Content-disposition: attachment;filename=AccessDenied.png");
+        header('Cache-Control: public,s-maxage=36000,max-age=3600');
+        echo file_get_contents(__DIR__ . "/assets/img/akkarin.jpg");
+        exit();
+    }
 
     $curlObj = Client::init('https://telegra.ph/file/'.$name)
         ->setHeader('User-Agent', getallheaders()['User-Agent'])
         ->exec();
 
     if (!$curlObj->getStatus()) {
+        http_response_code(501);
         echo file_get_contents(__DIR__ . "/assets/img/akkarin.jpg");
     }
     $header = strtolower($curlObj->getHeader());
@@ -61,6 +66,7 @@ $router->get('/file/(.*)', function($name) {
         header("content-type: ".substr($header, $start+14, $end-$start-16));
         echo $curlObj->getBody();
     }else{
+        http_response_code($curlObj->getInfo()['http_code']);
         header("content-type: image/jpeg");
         header('Cache-Control: public,s-maxage=36000,max-age=3600');
         echo file_get_contents(__DIR__ . "/assets/img/akkarin.jpg");
