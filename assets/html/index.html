@@ -29,9 +29,6 @@
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container nav-main">
             <a class="navbar-brand" href="/">Teleimg</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
@@ -51,7 +48,7 @@
     <div class="container">
         <h1 class="mt-5">Image Upload</h1>
         <p class="lead">Please select your images and we will get them uploaded.</p>
-        <form class="dropzone" id="myDropzone">
+        <form class="dropzone rounded" id="myDropzone">
             <div class="am-text-success dz-message">
                 Drop files here to upload<br>Or click here to open the explorer to select the files
             </div>
@@ -61,22 +58,30 @@
             </div>
         </form>
         <div class="dropzone-previews"></div>
+
+        <br />
+
+        <div class="container" id="imgShow" style="display:none;margin-top: 10px;">
+
+        </div>
     </div>
 </main>
 
 <footer class="footer mt-auto py-3 bg-light">
         <div class="container">
             <div class="row">
-                <div class="col-lg-9">
+                <div class="col-lg-12">
                     <p class="text-muted">
-                        Please <strong>DO NOT</strong> upload pictures that violate the laws of your region. <span title="Not Suitable For Work">NSFW</span> images are not welcomed. <span>Copyright Ⓒ All rights reserved.  -
-                <a href="https://t.me/joinchat/RebO6OW_DoDajiVJ" title="Telegram Group">Telegram</a>
-                <a href="https://telegra.ph/" target="_blank" title="Made possible by Telegraph">Telegraph</a>
+                        Please <strong>DO NOT</strong> upload pictures that violate the laws of your region. <span title="Not Suitable For Work">NSFW</span> images are not welcomed. <span>Copyright Ⓒ All rights reserved.
+
+                        <a href="https://t.me/joinchat/RebO6OW_DoDajiVJ" title="Telegram Group">Telegram</a>
                     </span></p>
                 </div>
                 <div class="col-lg-9">
                     <div class="advert_title text-muted">
-                        Accelerated by
+                        Storage by
+                        <a href="https://telegra.ph/" target="_blank" title="Made possible by Telegraph">Telegraph</a>
+                        & Accelerated by
                         <img onclick="window.open('https://curl.qcloud.com/ysARP1Dp')" src="https://cdn.jsdelivr.net/gh/TennousuAthena/tennousuathena.github.io/source/assets/img/qcloud.svg" alt="Tencent Cloud">
                     </div>
                 </div>
@@ -84,7 +89,7 @@
         </div>
 </footer>
 
-<script src="assets/js/jquery.slim.min.js"></script>
+<script src="assets/js/jquery.min.js"></script>
 <script src="assets/js/bootstrap.min.js"></script>
 <script src="assets/js/dropzone.min.js"></script>
 <script type="text/javascript">
@@ -99,9 +104,24 @@
         },
         success: function (file, response, e) {
             console.log(response)
-            file.previewTemplate.appendChild(document.createTextNode(response.src));
+            // file.previewTemplate.appendChild(document.createTextNode(response.src));
+            // window.open(window.location.origin + response.src)
             if (!response.success) {
                 $(file.previewTemplate).children('.dz-error-mark').css('opacity', '1')
+            }else{
+                $("#imgShow").append('<div class="row border rounded" style="margin-top: 10px;">\n' +
+                    '<div class="col-lg-5"><img src="'+response.src+'" class="w-75" alt="Image"></div>\n' +
+                    '<div class="col-lg-7"><div class="input-group mb-3">\n' +
+                    '  <div class="input-group-prepend">\n' +
+                    '    <span class="input-group-text" id="inputGroup-sizing-default">Image URL</span>\n' +
+                    '  </div>\n' +
+                    '  <input type="text" class="form-control" onclick="this.select();" value="'+ window.location.origin + response.src + '">\n' +
+                    '<div class="input-group mb-3"><div class="input-group-prepend">\n' +
+                    '    <span class="input-group-text" id="inputGroup-sizing-default">Markdown</span>\n' +
+                    '  </div>\n' +
+                    '  <input type="text" class="form-control" onclick="this.select();" value="![Image]('+ window.location.origin + response.src + ')">\n' +
+                    '</div></div></div>\n' +
+                    '</div>').fadeIn();
             }
         }
     });

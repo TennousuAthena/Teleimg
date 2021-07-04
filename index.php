@@ -1,7 +1,7 @@
 <?php
 use CustomCurl\Client;
 use Bramus\Router;
-header("x-powered-by: Teleimg v0.1");
+header("x-powered-by: Teleimg v0.2beta");
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/class/DB.class.php';
