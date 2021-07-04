@@ -7,8 +7,9 @@
     <meta name="author" content="TennousuAthena">
     <title>Teleimg - Image Upload</title>
 
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/nprogress.min.css" rel="stylesheet">
     <link href="assets/css/dropzone.min.css" rel="stylesheet">
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
 
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
@@ -16,8 +17,6 @@
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
     <link rel="manifest" href="assets/site.webmanifest">
     <meta name="theme-color" content="#13227a">
-
-
     <style>
         main > .container {
             padding: 60px 15px 0;
@@ -54,14 +53,17 @@
             </div>
 
             <div class="fallback">
-                <input name="file" type="file" multiple />
+                <input name="file" type="file" />
             </div>
         </form>
         <div class="dropzone-previews"></div>
 
-        <br />
+        <div class="input-group mb-3 mt-3" title="Comming soon..." data-bs-toggle="tooltip" data-bs-placement="top">
+            <input disabled type="file" class="form-control" id="FileUpload">
+            <button disabled class="btn btn-outline-secondary" type="button" id="FileUploadButton">Upload</button>
+        </div>
 
-        <div class="container" id="imgShow" style="display:none;margin-top: 10px;">
+        <div class="container mt-1 mb-2" id="imgShow" style="display:none;">
 
         </div>
     </div>
@@ -72,7 +74,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <p class="text-muted">
-                        Please <strong>DO NOT</strong> upload pictures that violate the laws of your region. <span title="Not Suitable For Work">NSFW</span> images are not welcomed. <span>Copyright Ⓒ All rights reserved.
+                        Please <strong>DO NOT</strong> upload pictures that violate the laws of your region. <span data-bs-toggle="tooltip" data-bs-placement="top" title="Not Suitable For Work">NSFW</span> images are not welcomed. <span>Copyright Ⓒ All rights reserved.
 
                         <a href="https://t.me/joinchat/RebO6OW_DoDajiVJ" title="Telegram Group">Telegram</a>
                     </span></p>
@@ -90,19 +92,35 @@
 </footer>
 
 <script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/dropzone.min.js"></script>
+<script src="assets/js/nprogress.min.js"></script>
 <script type="text/javascript">
+    NProgress.start();
+    $(document).ready(function (){
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+        NProgress.done();
+    });
     Dropzone.autoDiscover = false;
-    let myDropzone = new Dropzone("#myDropzone", {
+    $("#FileUpload").on("change", function (){
+        alert();
+    })
+    const myDropzone = new Dropzone("#myDropzone", {
         url: "/upload",
         uploadMultiple: false,
         method: 'post',
-        filesizeBase: 1024,
+        maxFilesize: 4,
+        filesizeBase: 1000,
         sending: function(file, xhr, formData) {
+            console.log(file)
+            NProgress.start();
             formData.append("filesize", file.size);
         },
         success: function (file, response, e) {
+            NProgress.done();
             console.log(response)
             // file.previewTemplate.appendChild(document.createTextNode(response.src));
             // window.open(window.location.origin + response.src)
@@ -110,18 +128,27 @@
                 $(file.previewTemplate).children('.dz-error-mark').css('opacity', '1')
             }else{
                 $("#imgShow").append('<div class="row border rounded" style="margin-top: 10px;">\n' +
-                    '<div class="col-lg-5"><img src="'+response.src+'" class="w-75" alt="Image"></div>\n' +
-                    '<div class="col-lg-7"><div class="input-group mb-3">\n' +
-                    '  <div class="input-group-prepend">\n' +
+                    '<div class="col-lg-5 "><img src="'+response.src+'" class="w-75" alt="Image"></div>\n' +
+                    '<div class="col-lg-7 mt-3"><h5 class="text-start overflow-hidden">' + file.name +
+                    '</h5><div class="input-group mb-1"><div class="input-group-prepend">\n' +
                     '    <span class="input-group-text" id="inputGroup-sizing-default">Image URL</span>\n' +
                     '  </div>\n' +
-                    '  <input type="text" class="form-control" onclick="this.select();" value="'+ window.location.origin + response.src + '">\n' +
-                    '<div class="input-group mb-3"><div class="input-group-prepend">\n' +
+                    '  <input type="text" class="form-control" value="'+ window.location.origin + response.src + '"></div>\n' +
+                    '<div class="input-group mb-1"><div class="input-group-prepend">\n' +
                     '    <span class="input-group-text" id="inputGroup-sizing-default">Markdown</span>\n' +
                     '  </div>\n' +
-                    '  <input type="text" class="form-control" onclick="this.select();" value="![Image]('+ window.location.origin + response.src + ')">\n' +
+                    '  <input type="text" class="form-control" value="!['+ file.name +']('+ window.location.origin + response.src + ')">\n' +
+                    '</div>' +
+                    '<div class="input-group mb-1"><div class="input-group-prepend">\n' +
+                    '    <span class="input-group-text" id="inputGroup-sizing-default">HTML</span>\n' +
+                    '  </div>\n' +
+                    '  <input type="text" class="form-control" value="<img src=\''+ window.location.origin + response.src + '\' alt=\''+ file.name +'\' > \">\n' +
                     '</div></div></div>\n' +
                     '</div>').fadeIn();
+                $(".form-control").on('click', function () {
+                    this.select();
+                    document.execCommand("copy");
+                })
             }
         }
     });
