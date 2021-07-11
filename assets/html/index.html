@@ -34,7 +34,7 @@
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="https://github.com/TennousuAthena/Teleimg">About</a>
+                        <a class="nav-link" target="_blank" href="https://github.com/TennousuAthena/Teleimg">About</a>
                     </li>
                 </ul>
             </div><!--/.nav-collapse -->
@@ -46,10 +46,12 @@
 <main class="flex-shrink-0">
     <div class="container">
         <h1 class="mt-5">Image Upload</h1>
+        <span class="badge bg-primary">v0.2 Beta</span>
+        <span class="badge bg-light text-dark" onclick="window.open('https://telegra.ph')">With Telegra.ph</a></span>
         <p class="lead">Please select your images and we will get them uploaded.</p>
         <form class="dropzone rounded" id="myDropzone">
             <div class="am-text-success dz-message">
-                Drop files here to upload<br>Or click here to open the explorer to select the files
+                Drop files here or paste them to upload<br>Or click here to open the explorer to select the files
             </div>
 
             <div class="fallback">
@@ -58,9 +60,9 @@
         </form>
         <div class="dropzone-previews"></div>
 
-        <div class="input-group mb-3 mt-3" title="Comming soon..." data-bs-toggle="tooltip" data-bs-placement="top">
-            <input disabled type="file" class="form-control" id="FileUpload">
-            <button disabled class="btn btn-outline-secondary" type="button" id="FileUploadButton">Upload</button>
+        <div class="input-group mb-3 mt-3" >
+            <input type="file" class="form-control" id="FileUpload" multiple>
+            <button class="btn btn-outline-secondary" type="button" id="FileUploadButton">Upload</button>
         </div>
 
         <div class="container mt-1 mb-2" id="imgShow" style="display:none;">
@@ -95,63 +97,6 @@
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/dropzone.min.js"></script>
 <script src="assets/js/nprogress.min.js"></script>
-<script type="text/javascript">
-    NProgress.start();
-    $(document).ready(function (){
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-        NProgress.done();
-    });
-    Dropzone.autoDiscover = false;
-    $("#FileUpload").on("change", function (){
-        alert();
-    })
-    const myDropzone = new Dropzone("#myDropzone", {
-        url: "/upload",
-        uploadMultiple: false,
-        method: 'post',
-        maxFilesize: 4,
-        filesizeBase: 1000,
-        sending: function(file, xhr, formData) {
-            console.log(file)
-            NProgress.start();
-            formData.append("filesize", file.size);
-        },
-        success: function (file, response, e) {
-            NProgress.done();
-            console.log(response)
-            // file.previewTemplate.appendChild(document.createTextNode(response.src));
-            // window.open(window.location.origin + response.src)
-            if (!response.success) {
-                $(file.previewTemplate).children('.dz-error-mark').css('opacity', '1')
-            }else{
-                $("#imgShow").append('<div class="row border rounded" style="margin-top: 10px;">\n' +
-                    '<div class="col-lg-5 "><img src="'+response.src+'" class="w-75" alt="Image"></div>\n' +
-                    '<div class="col-lg-7 mt-3"><h5 class="text-start overflow-hidden">' + file.name +
-                    '</h5><div class="input-group mb-1"><div class="input-group-prepend">\n' +
-                    '    <span class="input-group-text" id="inputGroup-sizing-default">Image URL</span>\n' +
-                    '  </div>\n' +
-                    '  <input type="text" class="form-control" value="'+ window.location.origin + response.src + '"></div>\n' +
-                    '<div class="input-group mb-1"><div class="input-group-prepend">\n' +
-                    '    <span class="input-group-text" id="inputGroup-sizing-default">Markdown</span>\n' +
-                    '  </div>\n' +
-                    '  <input type="text" class="form-control" value="!['+ file.name +']('+ window.location.origin + response.src + ')">\n' +
-                    '</div>' +
-                    '<div class="input-group mb-1"><div class="input-group-prepend">\n' +
-                    '    <span class="input-group-text" id="inputGroup-sizing-default">HTML</span>\n' +
-                    '  </div>\n' +
-                    '  <input type="text" class="form-control" value="<img src=\''+ window.location.origin + response.src + '\' alt=\''+ file.name +'\' > \">\n' +
-                    '</div></div></div>\n' +
-                    '</div>').fadeIn();
-                $(".form-control").on('click', function () {
-                    this.select();
-                    document.execCommand("copy");
-                })
-            }
-        }
-    });
-</script>
+<script type="text/javascript" src="assets/js/main.js"></script>
 </body>
 </html>

@@ -35,7 +35,8 @@ class database
     /**
      * @return array
      */
-    public function fetchAll(){
+    public function fetchAll(): array
+    {
         return $this->pdo->query('SELECT * FROM "main"."img"')->fetchAll();
     }
 }

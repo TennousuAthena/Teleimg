@@ -16,6 +16,11 @@ $router->get('/', function() {
 $router->get('/test', function() {
 });
 
+//$router->get('/api/fetch_all', function() {
+//    $data = new database('assets/data/teleimg.db');
+//    echo json_encode($data->fetchAll());
+//});
+
 $router->post('upload', function() {
     header("content-type:application/json; charset:utf-8");
     header("Cache-control: no-cache");
