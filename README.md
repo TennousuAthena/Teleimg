@@ -16,4 +16,4 @@ docker-compose up -d
 - Prepare *nginx(apache)* + *php* environment
 - Clone this repository and move this to your Web directory
 - (nginx) Include `./teleimg.conf` or paste the whole content to your nginx configuration file.
-- Done! 🎉
+- Done! 🎉 Just visit `http://localhost:8088` on your own machine
