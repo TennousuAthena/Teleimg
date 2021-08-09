@@ -1,8 +1,8 @@
 # Teleimg
 
-> 使用[Telegra.ph](https://telegra.ph)储存图片
+> Storage images with [Telegra.ph](https://telegra.ph)
 
-![image.png](https://i.qmcmc.cn/file/68daae403d0ff4ab8bb88.png)
+![image.png](https://telegra.ph/file/68daae403d0ff4ab8bb88.png)
 
 # Deploy
 
@@ -11,3 +11,9 @@
 docker-compose build
 docker-compose up -d
 ```
+
+## Manually
+- Prepare *nginx(apache)* + *php* environment
+- Clone this repository and move this to your Web directory
+- (nginx) Include `./teleimg.conf` or paste the whole content to your nginx configuration file.
+- Done! 🎉
