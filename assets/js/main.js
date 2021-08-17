@@ -24,7 +24,7 @@ const myDropzone = new Dropzone("#myDropzone", {
     uploadMultiple: false,
     method: 'post',
     acceptedFiles: 'image/*',
-    maxFilesize: 4,
+    maxFilesize: 10,
     filesizeBase: 1000,
     sending: function(file, xhr, formData) {
         // console.log(file)
